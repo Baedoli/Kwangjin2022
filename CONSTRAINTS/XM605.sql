@@ -1,0 +1,9 @@
+--------------------------------------------------------
+--  Constraints for Table XM605
+--------------------------------------------------------
+
+  ALTER TABLE "PREMIER"."XM605" MODIFY ("COMPANYCD" NOT NULL ENABLE);
+  ALTER TABLE "PREMIER"."XM605" MODIFY ("TEAMCD" NOT NULL ENABLE);
+  ALTER TABLE "PREMIER"."XM605" MODIFY ("TEAMNM" NOT NULL ENABLE);
+  ALTER TABLE "PREMIER"."XM605" ADD CONSTRAINT "PK_XM605" PRIMARY KEY ("COMPANYCD", "TEAMCD")
+  USING INDEX "PREMIER"."PK_XM605"  ENABLE;

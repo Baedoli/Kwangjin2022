@@ -1,0 +1,9 @@
+--------------------------------------------------------
+--  Constraints for Table XM900
+--------------------------------------------------------
+
+  ALTER TABLE "PREMIER"."XM900" MODIFY ("YMD" NOT NULL ENABLE);
+  ALTER TABLE "PREMIER"."XM900" MODIFY ("TOCOINCD" NOT NULL ENABLE);
+  ALTER TABLE "PREMIER"."XM900" MODIFY ("FROMCOINCD" NOT NULL ENABLE);
+  ALTER TABLE "PREMIER"."XM900" ADD CONSTRAINT "PK_XM900" PRIMARY KEY ("YMD", "TOCOINCD", "FROMCOINCD")
+  USING INDEX "PREMIER"."PK_XM900"  ENABLE;

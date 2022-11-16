@@ -1,0 +1,8 @@
+--------------------------------------------------------
+--  Constraints for Table XM000_SEARCH
+--------------------------------------------------------
+
+  ALTER TABLE "PREMIER"."XM000_SEARCH" MODIFY ("COMPANYCD" NOT NULL ENABLE);
+  ALTER TABLE "PREMIER"."XM000_SEARCH" MODIFY ("KINDCD" NOT NULL ENABLE);
+  ALTER TABLE "PREMIER"."XM000_SEARCH" ADD CONSTRAINT "PK_XM000_SEARCH" PRIMARY KEY ("COMPANYCD", "KINDCD")
+  USING INDEX "PREMIER"."PK_XM000_SEARCH"  ENABLE;

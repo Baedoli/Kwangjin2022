@@ -1,0 +1,10 @@
+--------------------------------------------------------
+--  Constraints for Table WF_DOCS
+--------------------------------------------------------
+
+  ALTER TABLE "PREMIER"."WF_DOCS" MODIFY ("DOC_ID" NOT NULL ENABLE);
+  ALTER TABLE "PREMIER"."WF_DOCS" MODIFY ("COM_ID" NOT NULL ENABLE);
+  ALTER TABLE "PREMIER"."WF_DOCS" MODIFY ("ORG_ID" NOT NULL ENABLE);
+  ALTER TABLE "PREMIER"."WF_DOCS" MODIFY ("EMP_ID" NOT NULL ENABLE);
+  ALTER TABLE "PREMIER"."WF_DOCS" ADD CONSTRAINT "WF_DOCS_PK" PRIMARY KEY ("DOC_ID")
+  USING INDEX "PREMIER"."WF_DOCS_PK"  ENABLE;
