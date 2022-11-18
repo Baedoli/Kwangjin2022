@@ -9,6 +9,9 @@ set define off;
   p_file_name   in varchar2,
   p_dir          in varchar2
 )
+
+-- log test ...
+
 IS
   v_blob BLOB;
   l_clob CLOB;
