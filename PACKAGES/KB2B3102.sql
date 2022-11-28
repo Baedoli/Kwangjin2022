@@ -1,28 +1,31 @@
 --------------------------------------------------------
---  DDL for Package KSCM9102
+--  DDL for Package KB2B3102
 --------------------------------------------------------
 
-  CREATE OR REPLACE EDITIONABLE PACKAGE "PREMIER"."KSCM9102" 
+  CREATE OR REPLACE EDITIONABLE PACKAGE "PREMIER"."KB2B3102" 
 is
   PROCEDURE control
   (
     p_companycd in varchar2 default common.get_cookie('SYSCOMP'),
-    p_yy in  varchar2 default to_char(sysdate,'yyyymmdd')
+    p_ecompanycd in varchar2 default common.get_cookie('SYSCOMP'),
+    p_kindcd in varchar2 default null
   );
  
   PROCEDURE query_a
   (
     p_companycd in varchar2 default null,
-    p_yy in  varchar2 default null
+    p_ecompanycd in varchar2 default null,
+    p_kindcd in  varchar2 default null
   );
   
   PROCEDURE query_a_data
   (
     p_companycd in varchar2 default null,
-    p_yy in  varchar2 default null
+    p_ecompanycd in varchar2 default null,
+    p_kindcd in  varchar2 default null
   );
   
-  v_pkg varchar2(100 ) := 'kscm9102';
+  v_pkg varchar2(100 ) := 'kb2b3102';
   v_linkid varchar2(200);
   
   v_number number := 0;
@@ -32,6 +35,6 @@ is
   v_id varchar2(20) := common.get_cookie('SYSID');
   v_type varchar2(2) := common.get_cookie('SYSTYPE');
  
-end kscm9102;
+end kb2b3102;
 
 /

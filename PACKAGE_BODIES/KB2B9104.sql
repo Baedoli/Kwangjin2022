@@ -1,13 +1,13 @@
 --------------------------------------------------------
---  DDL for Package Body KSCM9102
+--  DDL for Package Body KB2B9104
 --------------------------------------------------------
 
-  CREATE OR REPLACE EDITIONABLE PACKAGE BODY "PREMIER"."KSCM9102" 
+  CREATE OR REPLACE EDITIONABLE PACKAGE BODY "PREMIER"."KB2B9104" 
 IS
   PROCEDURE control
   (
     p_companycd in varchar2 default common.get_cookie('SYSCOMP'),
-    p_yy in  varchar2 default to_char(sysdate,'yyyymmdd')
+    p_kindcd in  varchar2 default null
   )
   IS
   
@@ -67,17 +67,6 @@ IS
       $(function() {
         doOnLoad();  
         
-        $("#p_yy").datepicker({
-          changeMonth: true,
-          changeYear: true,
-          dateFormat: "yymmdd",
-          buttonImage: "/image/calendar.gif",
-          showOn: "focus", // focus, button, both
-          showAnim: "fadeIn", //explode, fold, slideDown
-          showOptions: {pieces: 1},
-          duration: 500
-        }) ; 
-        
         $(window).on("resize", function(){
           myLayout.detachHeader();
           attachHeader();
@@ -94,12 +83,21 @@ IS
       <div id="c01">
       
         <div class="cBox">
-          <div class="cTitle"><label for="p_yy">'||get_fn('기준일자')||'</label></div>
+          <div class="cTitle"><label for="p_companycd">'||get_fn('수주사업장')||'</label></div>
           <div class="cInput">
-            <input type="text" id="p_yy" name="p_yy" maxlength="8" class="cDate" value="'||p_yy||'" />   
+            <select name="p_companycd" id="p_companycd">
+            '); common.list_company(p_companycd, v_lang); htp.p('
+            </select>
           </div>
         </div>  
-      
+        
+        <div class="cBox">
+          <div class="cTitle"><label for="p_kindcd">'||get_fn('차종')||'</label></div>
+          <div class="cInput">
+            '); common.list_catalog('B2B','kindnm',p_kindcd,'select', null, 'p_kindcd', 'a', 'yes'); htp.p('
+          </div>
+        </div> 
+        
       </div>
       <div id="c11">
         <a href="#" target="list" onclick="doQuery(); return false;" class="btn-search buttons">'||get_fn('조회')||'</a>
@@ -128,7 +126,7 @@ IS
   PROCEDURE query_a
   (
     p_companycd in varchar2 default null,
-    p_yy in  varchar2 default null
+    p_kindcd in  varchar2 default null
   )
   IS
     
@@ -158,17 +156,17 @@ IS
             var i = 0;     
             
             x[i]=["NO", "40","center","ro","int","true"];i++;
-            x[i]=["'||get_fn('생산지')||'", "100","center","ro","str","true"];i++;
+            x[i]=["'||get_fn('수주사업장')||'", "70","center","ro","str","true"];i++;
             x[i]=["'||get_fn('차종')||'", "100","center","ro","str","true"];i++;
-            x[i]=["'||get_fn('품번')||'", "200","left","ro","str","true"];i++;
-            x[i]=["'||get_fn('품명')||'", "200","left","ro","str","true"];i++;
-            x[i]=["'||get_fn('점유율')||'", "50","left","ron","int","true"];i++;
-            x[i]=["'||get_fn('당일')||'", "50","center","ron","int","true"];mygrid.setNumberFormat("0,000", i);i++;
-            
-            '); for i in 1..13 loop htp.p('
-            x[i]=["'||get_fn('+'||i||'일')||'", "50","center","ron","int","true"];mygrid.setNumberFormat("0,000", i);i++;     
-            '); end loop;  htp.p('
-            
+            x[i]=["'||get_fn('품번')||'", "100","center","ro","str","true"];i++;
+            x[i]=["'||get_fn('품명')||'", "*","center","ro","str","true"];i++;
+            x[i]=["'||get_fn('무게')||'", "100","center","ro","str","true"];i++;
+            x[i]=["'||get_fn('단가')||'", "100","center","ron","int","true"];mygrid.setNumberFormat("0,000", i);i++;
+            x[i]=["'||get_fn('LOT수량')||'", "100","center","ron","int","true"];mygrid.setNumberFormat("0,000", i);i++;
+            x[i]=["'||get_fn('포장단위')||'", "100","center","ro","str","true"];i++;
+            x[i]=["'||get_fn('리드타임')||'", "100","center","ro","str","true"];i++;
+            x[i]=["'||get_fn('품목구분')||'", "100","center","ro","str","true"];i++;
+
             for(j=0;j<i;j++){
               if(j==0) cm="";
               else cm=",";
@@ -236,32 +234,22 @@ IS
   PROCEDURE query_a_data
   (
     p_companycd in varchar2 default null,
-    p_yy in  varchar2 default null
+    p_kindcd in  varchar2 default null
   )
   IS
     cursor cur is
-      select 'busan' as center
-            ,'cn7' as kindcd
-            ,'4270-2335' as partno
-            ,'REG ASSY-PR LH' as partnm
-            ,'23%' as mshare
-            ,'3456' as today
-            ,1111 as m01
-            ,1112 as m02
-            ,1113 as m03
-            ,1114 as m04
-            ,1115 as m05
-            ,1116 as m06
-            ,1117 as m07
-            ,1118 as m08
-            ,1119 as m09
-            ,1120 as m10
-            ,1121 as m11
-            ,1121 as m12
-            ,1121 as m13
+      select 'AJIN' as companycd
+            ,'k8' as kindcd
+            ,'55334-12344' as partno
+            ,'window' as partnm
+            ,'744' as weight
+            ,'5784' as cost
+            ,'15123456' as qty
+            ,'kg' as popo
+            ,'15' as readtime
+            ,'1' as gubun
       from dual
       ;
-      
     type r is table of cur%rowtype index by pls_integer;
     rec r;
     
@@ -284,28 +272,19 @@ IS
       { id:' ||i|| ',
         data:[
           {value:"'||i||'"},
-          {value:"'||rec(i).center||'"},
+          {value:"'||rec(i).companycd||'"},
           {value:"'||rec(i).kindcd||'"},
           {value:"'||rec(i).partno||'"},
           {value:"'||rec(i).partnm||'"},
-          {value:"'||rec(i).mshare||'"},
-          {value:"'||rec(i).today||'"},
-          {value:"'||rec(i).m01||'"},
-          {value:"'||rec(i).m02||'"},
-          {value:"'||rec(i).m03||'"},
-          {value:"'||rec(i).m04||'"},
-          {value:"'||rec(i).m05||'"},
-          {value:"'||rec(i).m06||'"},
-          {value:"'||rec(i).m07||'"},
-          {value:"'||rec(i).m08||'"},
-          {value:"'||rec(i).m09||'"},
-          {value:"'||rec(i).m10||'"},
-          {value:"'||rec(i).m11||'"},
-          {value:"'||rec(i).m12||'"},
-          {value:"'||rec(i).m13||'"}
+          {value:"'||rec(i).weight||'"},
+          {value:"'||rec(i).cost||'"},
+          {value:"'||rec(i).qty||'"},
+          {value:"'||rec(i).popo||'"},
+          {value:"'||rec(i).readtime||'"},
+          {value:"'||rec(i).gubun||'"}
         ]
       } ');
-        
+      
       if i < v_number then
         htp .p(',');
       end if;
@@ -322,6 +301,6 @@ IS
       show_err('query_a_data'); 
   END query_a_data;
   
-END kscm9102;
+END kb2b9104;
 
 /

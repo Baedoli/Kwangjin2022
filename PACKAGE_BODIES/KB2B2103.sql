@@ -1,13 +1,12 @@
 --------------------------------------------------------
---  DDL for Package Body KSCM9102
+--  DDL for Package Body KB2B2103
 --------------------------------------------------------
 
-  CREATE OR REPLACE EDITIONABLE PACKAGE BODY "PREMIER"."KSCM9102" 
+  CREATE OR REPLACE EDITIONABLE PACKAGE BODY "PREMIER"."KB2B2103" 
 IS
   PROCEDURE control
   (
-    p_companycd in varchar2 default common.get_cookie('SYSCOMP'),
-    p_yy in  varchar2 default to_char(sysdate,'yyyymmdd')
+    p_companycd in varchar2 default common.get_cookie('SYSCOMP')
   )
   IS
   
@@ -27,15 +26,22 @@ IS
       
       function doOnLoad() {
         window.dhx4.ajax.cache = true;
-        myLayout = new dhtmlXLayoutObject(document.body, "1C","dhx_skyblue");
+        myLayout = new dhtmlXLayoutObject(document.body, "2E","dhx_skyblue");
         myLayout.cells("a").setText("■ Sample");
         myLayout.cells("a").hideHeader();
+        myLayout.cells("b").hideHeader();
+        //myLayout.cells("b").hideHeader();
+        myLayout.cells("a").setWidth(700);
+        //myLayout.cells("b").setHeight(260);
         myLayout.cells("a").fixSize(true, true);
         mygrid = myLayout.cells("a").attachGrid();
         mygrid.preventIECaching(false);
         var v_url_a = "'||v_pkg||'.query_a?"+$("#form1").serialize();
+        var v_url_b = "'||v_pkg||'.query_b?";
         myLayout.cells("a").progressOn();
+        myLayout.cells("b").progressOn();
         myLayout.cells("a").attachURL(v_url_a);
+        myLayout.cells("b").attachURL(v_url_b);
         attachHeader();
         attachStatusBar();
         sbObj.setText("'||get_fn('자료검색중')||'..");
@@ -50,7 +56,8 @@ IS
         sbObj = myLayout.attachStatusBar({text:""}); 
       }
       
-      function setStatusBarText(rowCount) {
+      function setStatusBarText(rowCount)
+      {
         sbObj.setText("'||get_fn('자료검색을 종료합니다..')||'"+ rowCount +" '||get_fn('건이 검색되었습니다.')||'");
       }
       
@@ -58,7 +65,8 @@ IS
         document.getElementById("form1").submit();
       }
       
-      function doCrrec() {  
+      function doCrrec()  
+      {  
         var url = "'||v_pkg||'.crrec?p_companycd='||p_companycd||'";  
         newWnd2 = window.open(url,"'||v_pkg||'window","top=100, left=100, status=yes, resizable=no, scrollbars=yes, width=1000, height=700");  
         newWnd2.focus();
@@ -67,10 +75,10 @@ IS
       $(function() {
         doOnLoad();  
         
-        $("#p_yy").datepicker({
+        $("#p_symd").datepicker({
           changeMonth: true,
           changeYear: true,
-          dateFormat: "yymmdd",
+          dateFormat: "yymm",
           buttonImage: "/image/calendar.gif",
           showOn: "focus", // focus, button, both
           showAnim: "fadeIn", //explode, fold, slideDown
@@ -90,20 +98,22 @@ IS
   <body>
   <div id="top-header" style="padding-bottom: 2px;background-color: #ffffff;">
     <form id="form1" name="form1" method="post" action="'||v_pkg||'.control">
+    <!--input type="hidden" name="p_companycd" value="'||p_companycd||'"/-->
     <div id="c00">
       <div id="c01">
       
         <div class="cBox">
-          <div class="cTitle"><label for="p_yy">'||get_fn('기준일자')||'</label></div>
+          <div class="cTitle"><label for="p_companycd">'||get_fn('사업장')||'</label></div>
           <div class="cInput">
-            <input type="text" id="p_yy" name="p_yy" maxlength="8" class="cDate" value="'||p_yy||'" />   
+            <select name="p_companycd" id="p_companycd">
+            '); common.list_company(p_companycd, v_lang); htp.p('
+            </select>
           </div>
-        </div>  
-      
+        </div> 
+        
       </div>
       <div id="c11">
         <a href="#" target="list" onclick="doQuery(); return false;" class="btn-search buttons">'||get_fn('조회')||'</a>
-        <a href="#" target="list" onclick="excel(); return false;" class="btn-excel buttons">'||get_fn('EXCEL')||'</a>
       </div>
       <div class="crlf"></div>
     </div>
@@ -112,6 +122,7 @@ IS
         
       </div>
       <div class="floatR">
+
       </div>
       <div class="crlf"></div>
     </div>
@@ -127,8 +138,7 @@ IS
   
   PROCEDURE query_a
   (
-    p_companycd in varchar2 default null,
-    p_yy in  varchar2 default null
+    p_companycd in varchar2 default null
   )
   IS
     
@@ -158,17 +168,13 @@ IS
             var i = 0;     
             
             x[i]=["NO", "40","center","ro","int","true"];i++;
-            x[i]=["'||get_fn('생산지')||'", "100","center","ro","str","true"];i++;
-            x[i]=["'||get_fn('차종')||'", "100","center","ro","str","true"];i++;
-            x[i]=["'||get_fn('품번')||'", "200","left","ro","str","true"];i++;
-            x[i]=["'||get_fn('품명')||'", "200","left","ro","str","true"];i++;
-            x[i]=["'||get_fn('점유율')||'", "50","left","ron","int","true"];i++;
-            x[i]=["'||get_fn('당일')||'", "50","center","ron","int","true"];mygrid.setNumberFormat("0,000", i);i++;
-            
-            '); for i in 1..13 loop htp.p('
-            x[i]=["'||get_fn('+'||i||'일')||'", "50","center","ron","int","true"];mygrid.setNumberFormat("0,000", i);i++;     
-            '); end loop;  htp.p('
-            
+            x[i]=["'||get_fn('송장번호')||'", "130","center","ro","str","true"];i++;
+            x[i]=["'||get_fn('도착사업장')||'", "240","center","ro","str","true"];i++;
+            x[i]=["'||get_fn('출발일자')||'", "100","center","ro","str","true"];i++;
+            x[i]=["'||get_fn('Draw Date')||'", "100","center","ro","str","true"];i++;
+            x[i]=["'||get_fn('송장 첨부 파일')||'", "150","center","ro","str","true"];i++;
+            x[i]=["'||get_fn('포장 첨부 파일')||'", "150","center","ro","str","true"];i++;
+
             for(j=0;j<i;j++){
               if(j==0) cm="";
               else cm=",";
@@ -235,30 +241,170 @@ IS
   
   PROCEDURE query_a_data
   (
-    p_companycd in varchar2 default null,
-    p_yy in  varchar2 default null
+    p_companycd in varchar2 default null
+  )
+  IS
+  
+    cursor cur is
+      select '81270-2335' as sno
+            ,'incheon' as companycd
+            ,'20221014' as sdate
+            ,'20221223' as ddate
+            ,'6' as sattach
+            ,'8' as pattach
+      from dual
+      ;
+
+    type r is table of cur%rowtype index by pls_integer;
+    rec r;
+    
+    v_number number := 0 ;
+    v_link varchar2(4096) := null;
+
+  BEGIN
+  
+    owa_util.mime_header('application/json');
+
+    open cur;
+    fetch cur bulk collect into rec;
+    close cur;
+    
+    htp.p('{rows:[ ');
+    v_number := rec.count;
+    for i in 1 .. v_number loop
+--      v_link := '^javascript:link_(\"'||rec(i).companycd||'\", \"'||rec(i).vendcd||'\", \"'||rec(i).partno||'\", \"'||rec(i).sno||'\")^_self';
+      htp .p('
+      { id:' ||i|| ',
+        data:[
+          {value:"'||i||'"},
+          {value:"'||rec(i).sno||'"},
+          {value:"'||rec(i).companycd||'"},
+          {value:"'||rec(i).sdate||'"},
+          {value:"'||rec(i).ddate||'"},
+          {value:"'||rec(i).sattach||'"},
+          {value:"'||rec(i).pattach||'"}
+        ]
+      } ');
+      
+      if i < v_number then
+        htp .p(',');
+      end if;
+      
+    end loop;
+    
+    if v_number = 0 then
+      htp .p('{[]}');
+    end if;
+    
+    htp.p(']}');
+  EXCEPTION
+    when others then
+      show_err('query_a_data'); 
+  END query_a_data;
+  
+  PROCEDURE query_b
+  (
+    p_companycd in varchar2 default null
+  )
+  IS
+    
+  BEGIN    
+    htp.p('
+  <!DOCTYPE html">
+  <html lang="ko">
+    <head>
+      <title>'||common.title||'</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />  
+        '); dbv_grid.print_env_v451; htp.p('
+        <script type="text/javascript">
+        
+          function doInitGrid(){
+            mygrid = new dhtmlXGridObject("mygrid_obj");
+            mygrid.setImagePath("/grid451/skins/web/imgs/dhxgrid_web/");
+            var v_header="";
+            var w_header="";
+            var v_width="";
+            var v_align="";
+            var v_types="";
+            var v_sorting="";
+            var v_tooltip="";
+            var x = new Array(9);
+            var cm = "";
+            var i = 0;     
+           
+            x[i]=["NO", "40","center","ro","int","true"];i++;
+            x[i]=["'||get_fn('컨테이너 번호')||'", "200","center","ro","str","true"];i++;
+            x[i]=["'||get_fn('포장일')||'", "200","center","ro","str","true"];i++;
+            x[i]=["'||get_fn('출발일')||'", "200","left","ro","str","true"];i++;
+            x[i]=["'||get_fn('상태')||'", "200","left","ro","str","true"];i++;
+         
+            for(j=0;j<i;j++){
+              if(j==0) cm="";
+              else cm=",";
+              v_header=v_header+cm+x[j][0];
+              v_width=v_width+cm+x[j][1];
+              v_align=v_align+cm+x[j][2];
+              v_types=v_types+cm+x[j][3];
+              v_sorting=v_sorting+cm+x[j][4];
+              v_tooltip=v_tooltip+cm+x[j][5];
+            }
+            
+            mygrid.setHeader(v_header);
+            mygrid.setInitWidths(v_width);
+            mygrid.setColAlign(v_align);
+            mygrid.setColTypes(v_types);
+            mygrid.enableColumnMove(true);
+            mygrid.enableCollSpan(false);
+            mygrid.enableTooltips(v_tooltip);
+            mygrid.setColSorting(v_sorting);
+            mygrid.enableEditEvents(false,true,false);
+            mygrid.enableRowsHover(true,"grid_hover");
+            mygrid.init();
+            mygrid.enableHeaderMenu();
+            mygrid.enableDistributedParsing(true,10,300);
+            mygrid.preventIECaching(false);
+            mygrid.setSkin("dhx_web");
+            //mygrid.attachEvent("onRowSelect",doOnRowSelected);
+            var url = "'||v_pkg||'.query_b_data?";
+            mygrid.load(url, "json");
+            mygrid.attachEvent("onXLE", function() {
+              parent.setStatusBarText(mygrid.getRowsNum());
+              parent.myLayout.cells("b").progressOff();
+            }); 
+          }
+          
+          function link_(obj1, obj2, obj3, obj4, obj5){
+            url ="'||v_pkg||'.crrec?p_companycd="+obj1+"&p_vendcd="+obj2+"&p_partno="+obj3+"&p_sno="+obj4;
+            newWnd2 = window.open(url,"'||v_pkg||'window","top=100, left=100, status=yes, resizable=no, scrollbars=yes, width=1000, height=700");  
+            newWnd2.focus();
+          }
+          
+          $(function() {
+            doInitGrid();
+          });
+          
+        </script>
+      </head>
+    <body>
+      <div id="mygrid_obj" style="width:100%;height:100%;"></div>
+    </body>
+  </html> ');
+  EXCEPTION
+    WHEN OTHERS THEN
+      show_err('query_b');
+  END query_b;
+  
+  PROCEDURE query_b_data
+  (
+    p_companycd in varchar2 default null
   )
   IS
     cursor cur is
-      select 'busan' as center
-            ,'cn7' as kindcd
-            ,'4270-2335' as partno
-            ,'REG ASSY-PR LH' as partnm
-            ,'23%' as mshare
-            ,'3456' as today
-            ,1111 as m01
-            ,1112 as m02
-            ,1113 as m03
-            ,1114 as m04
-            ,1115 as m05
-            ,1116 as m06
-            ,1117 as m07
-            ,1118 as m08
-            ,1119 as m09
-            ,1120 as m10
-            ,1121 as m11
-            ,1121 as m12
-            ,1121 as m13
+      select '1480-1845' as conno
+            ,'20221025' as pdate
+            ,'20221027' as sdate
+            ,'soso' as feel
       from dual
       ;
       
@@ -284,28 +430,13 @@ IS
       { id:' ||i|| ',
         data:[
           {value:"'||i||'"},
-          {value:"'||rec(i).center||'"},
-          {value:"'||rec(i).kindcd||'"},
-          {value:"'||rec(i).partno||'"},
-          {value:"'||rec(i).partnm||'"},
-          {value:"'||rec(i).mshare||'"},
-          {value:"'||rec(i).today||'"},
-          {value:"'||rec(i).m01||'"},
-          {value:"'||rec(i).m02||'"},
-          {value:"'||rec(i).m03||'"},
-          {value:"'||rec(i).m04||'"},
-          {value:"'||rec(i).m05||'"},
-          {value:"'||rec(i).m06||'"},
-          {value:"'||rec(i).m07||'"},
-          {value:"'||rec(i).m08||'"},
-          {value:"'||rec(i).m09||'"},
-          {value:"'||rec(i).m10||'"},
-          {value:"'||rec(i).m11||'"},
-          {value:"'||rec(i).m12||'"},
-          {value:"'||rec(i).m13||'"}
+          {value:"'||rec(i).conno||'"},
+          {value:"'||rec(i).pdate||'"},
+          {value:"'||rec(i).sdate||'"},
+          {value:"'||rec(i).feel||'"}
         ]
       } ');
-        
+      
       if i < v_number then
         htp .p(',');
       end if;
@@ -319,9 +450,9 @@ IS
     htp.p(']}');
   EXCEPTION
     when others then
-      show_err('query_a_data'); 
-  END query_a_data;
-  
-END kscm9102;
+      show_err('query_b_data'); 
+  END query_b_data;
+ 
+END kb2b2103;
 
 /

@@ -9,6 +9,9 @@ set define off;
   p_file_name   in varchar2,
   p_dir          in varchar2
 )
+
+-- log test ...
+
 IS
   v_blob BLOB;
   l_clob CLOB;
@@ -65,5 +68,6 @@ EXCEPTION
     UTL_FILE.FCLOSE(v_output);  
 --    DBMS_OUTPUT.PUT_LINE ('error : '|| substr(replace(replace(sqlerrm, chr(10), ''), '"', ''''), 1, 3000)||'' );
 END;
+
 
 /

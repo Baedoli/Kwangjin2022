@@ -7,6 +7,10 @@ set define off;
 IS
 BEGIN
 
+  -- commit work test bsh ...
+  -- ....
+  -- commit work test ljs..
+
   owa_util.mime_header('text/html', false);
   owa_cookie.remove('SYSCOMP', common.get_cookie('SYSCOMP'));
   owa_cookie.remove('SYSID', common.get_cookie('SYSID'));
@@ -21,7 +25,7 @@ BEGIN
 
   owa_util.redirect_url('LOGIN');  
   owa_util.http_header_close; 
-  
+
 EXCEPTION
   when others then 
     show_err('LOGOUT');

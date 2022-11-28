@@ -18,7 +18,8 @@ IS
   PROCEDURE list_company
   (
     p_companycd in varchar2, 
-    p_lang      in varchar2
+    p_lang      in varchar2,
+    p_flag      in varchar2 default '1'
   );  
 
   PROCEDURE list_catalog_name
@@ -47,6 +48,18 @@ IS
   PROCEDURE list_systemcd (
     p_systemcd   in varchar2,
     p_all_type   in varchar2
+  );
+  
+  procedure list_dept (
+    p_companycd in varchar2,
+    p_deptcd in varchar2,
+    p_element_tag in varchar2,
+    p_element_type in varchar2,
+    p_element_name in varchar2,
+    p_all_type in varchar2,
+    p_attr in varchar2 default null,
+    p_lang in varchar2 default common.get_cookie('SYSLANG'),
+    p_team_type in varchar2 default null
   );
 
   PROCEDURE imageView

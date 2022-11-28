@@ -193,6 +193,7 @@ IS
         {"menuseq":1004,"upmenuid":0,"menuurl":"'||v_pkg||'.main_body","menulevel":1,"sortnum":10,"menuname":"HOME","menuicon":"<i class=\"fas fa-home\"><\/i>"},
         {"menuseq":1000,"upmenuid":0,"menuurl":null,"menulevel":1,"sortnum":20,"menuname":"SCM","menuicon":"<i class=\"fas fa-truck\"><\/i>"},
         {"menuseq":1001,"upmenuid":0,"menuurl":null,"menulevel":1,"sortnum":30,"menuname":"B2B","menuicon":"<i class=\"fas fa-ship\"><\/i>"},
+        {"menuseq":3063,"upmenuid":0,"menuurl":null,"menulevel":1,"sortnum":40,"menuname":"MDM","menuicon":"<i class=\"fas fa-server\"><\/i>"},
         {"menuseq":996,"upmenuid":0,"menuurl":null,"menulevel":1,"sortnum":90,"menuname":"SYS","menuicon":"<i class=\"fas fa-cog\"><\/i>"}
       ];  
        
@@ -260,9 +261,9 @@ IS
       //북마크 사이드바
       var bookmark_sidebar = new dhx.Sidebar(null, {css: "black_content"});
       //대메뉴 카운트
-      var header_data_count = 4;
+      var header_data_count = 5;
       //대메뉴 데이터뷰
-      var header_menu = new dhx.DataView(null, {itemsInRow: "4",gap: 0, css: "header_dataview",template: header_menu_template});
+      var header_menu = new dhx.DataView(null, {itemsInRow: "5",gap: 0, css: "header_dataview",template: header_menu_template});
 
       //상단우측 툴바 
       var toolbar = new dhx.Toolbar(null, {css: "toolbar"});

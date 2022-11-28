@@ -183,6 +183,18 @@ IS
             });
           });
         }
+        
+        // list_dept 사용시 두개이상의 셀렉트박스 연결 함수
+            function getTeamList(p_companycd, p_teamcd, p_element_id) {
+              var url = "get_team_list";
+              var param = {"p_companycd": p_companycd, "p_teamcd": p_teamcd, "p_all_type": "c"};
+              $("#"+p_element_id+" option").remove();
+              $.getJSON(url, param, function(returnData, textStatus) {
+                $.each(returnData, function(i) {
+                  $("#"+p_element_id+"").append("<option value=''"+returnData[i].optionValue+"'' "+returnData[i].selected+">"+returnData[i].optionName+"</option>");
+                });
+              });
+            }
          
       $(document).ready(function() {  
          domReady();

@@ -7,7 +7,7 @@ set define off;
 IS
 
 BEGIN
-
+  -- bash test ....
   htp.p('
     <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
     <html lang="ko">
@@ -103,7 +103,7 @@ BEGIN
                   cancel
                 </button>
               </div>
-              
+
               <div class="wrap-input100 auth-box" style="display:none;">
                 <input class="input100" type="text" name="authkey" id="authkey">
                 <span class="focus-input100"></span>
@@ -136,7 +136,7 @@ BEGIN
                   CANCEL
                 </button>
               </div>
-              
+
               <div class="wrap-input100 pw-box" style="display:none;">
                 <input class="input100" type="password" name="curPw" id="curPw">
                 <span class="focus-input100"></span>
@@ -174,7 +174,7 @@ BEGIN
             </form>
 
             <div class="password100-more">
-              
+
             </div>
           </div>
         </div>
@@ -182,7 +182,7 @@ BEGIN
       <div class="wrap-loading display-none">
         <div><img style="width: 42px; height: 42px;" src="/resources/images/ajaxloading.gif"></div>
       </div> 
-      
+
     <!--===============================================================================================-->
     <script src="/include/login/vendor/jquery/jquery-3.2.1.min.js"></script>
     <script src="/include/login/vendor/animsition/js/animsition.min.js"></script>
@@ -196,12 +196,12 @@ BEGIN
     <script src="/js/common/premier_util.js" type="text/javascript"></script>
     <script src="/include/login/js/main_premier_v1.js"></script>
   <!--===============================================================================================-->
-      
+
       <!-- 실제 JSP 코딩 -->
       <!--
       ${init}
       -->
-      
+
     </body></html>
   ');
 
@@ -209,5 +209,6 @@ exception
   when others then 
     show_err('PASSWORD_');
 END PASSWORD_;
+
 
 /

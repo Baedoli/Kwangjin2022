@@ -67,16 +67,14 @@ IS
   PROCEDURE list_company
   (
     p_companycd in varchar2, 
-    p_lang      in varchar2
+    p_lang      in varchar2,
+    p_flag      in varchar2 default '1'
   )
   IS
   
   cursor cur (p_lang in varchar2) is
     select * 
     from (
-          select 1 step, null companycd, get_fn('전체') as descr, 0 kpi_order
-          from dual
-          union all
           select 2 step, a.companycd, b.name as descr, a.kpi_order
           from xm001 a,master_language b
           where 1=1
@@ -94,13 +92,21 @@ IS
   v_row number := 0;
   
   BEGIN
+  
+    if p_flag = '1' then
+      htp.p(' <option value="">'||get_fn('전체')||'</option>' );
+    else 
+      htp.p(' <option value="">'||get_fn('선택하세요')||'</option>' );
+    end if;
+    
     for rec in cur(p_lang) loop
       v_row := v_row + 1;
     if p_companycd is null then
-       if v_row = 1 then v_selected := '" selected>'; else v_selected := '">'; end if;
+       if v_row = 0 then v_selected := '" selected>'; else v_selected := '">'; end if;
     else   
        if( rec.companycd = p_companycd) then v_selected := '" selected>'; else v_selected := '">'; end if;
     end if;  
+    
       htp.p('<option value="'||rec.companycd||v_selected||rec.descr||'</option>');
     end loop;
   END list_company;
@@ -308,35 +314,164 @@ IS
     p_all_type   in varchar2
   )   
   IS   
-        cursor cur_search is  
-          select  systemcd, systemcd systemnm
-          from    c_0005
-          where   useyn = 'Y'
-          order by  1;
-         
-        v_selected varchar2(100);
+      cursor cur_search is  
+        select  systemcd, systemcd systemnm
+        from    c_0005
+        where   useyn = 'Y'
+        order by  1;
+       
+      v_selected varchar2(100);
 
-        v_column varchar2(20);   
-    BEGIN   
+      v_column varchar2(20);   
+  BEGIN   
+  
+    if lower(p_all_type) = 'a' then     
+      htp.p('          <option value="">'||get_fn('전체')||'</option>');
+    elsif substr(lower(p_all_type), 1, 1) = 'a' and length(lower(p_all_type)) > 1 then  --  value는 substr(lower(p_all_type), 2, length(p_all_type))
+      htp.p('          <option value="'||substr(lower(p_all_type), 2, length(p_all_type))||'">'||get_fn('전체')||'</option>');
+    elsif lower(p_all_type) = 'b' then  --  빈칸
+      htp.p('          <option value=""></option>');
+    elsif lower(p_all_type) = 'c' then  --  선택하세요
+      htp.p('          <option value="">'||get_fn('선택하세요')||'</option>');
+    elsif lower(p_all_type) = 'z' then  --  칸 없음
+      null;
+    end if;
     
-      if lower(p_all_type) = 'a' then     
-        htp.p('          <option value="">'||get_fn('전체')||'</option>');
+      --htp.p('<option value="">'||get_fn('선택하세요')||'</option>');
+    for rec in cur_search loop   
+      if (P_SYSTEMCD = rec.systemcd) then v_selected := '" selected>'; else v_selected := '">'; end if;   
+      htp.p('<option value="'||rec.systemcd||v_selected||rec.systemnm||'</option>');   
+    end loop;
+  END list_systemcd;  
+    
+  procedure list_dept (
+    p_companycd in varchar2,
+    p_deptcd in varchar2,
+    p_element_tag in varchar2,
+    p_element_type in varchar2,
+    p_element_name in varchar2,
+    p_all_type in varchar2,
+    p_attr in varchar2 default null,
+    p_lang in varchar2 default common.get_cookie('SYSLANG'),
+    p_team_type in varchar2 default null
+  )
+  is
+    cursor cur is
+      select  a.teamcd, b.name teamnm, 
+              case  when  p_element_tag = 'input' and p_element_type = 'checkbox' then
+                    case  when  instr(p_deptcd, teamcd) > 0 then
+                                'checked="checked"'
+                          else  null
+                    end
+              else
+                    case  when  p_element_tag = 'input'  then
+                                case  when  teamcd = p_deptcd  then
+                                            'checked="checked"'
+                                      else  null
+                                end
+                          when  p_element_tag = 'select' then
+                                case  when  teamcd = p_deptcd  then
+                                            'selected="selected"'
+                                      else  null
+                                end
+                          else  null
+                    end
+              end selected
+              --decode(listvalue, p_listvalue, decode(p_element_tag, 'input', 'checked="checked"', 'select', 'selected="selected"'), null) selected
+      from    xm605 a, master_language b
+      where    a.companycd = b.companycd
+      and      a.teamcd = b.code
+      and      a.companycd = p_companycd
+      and      a.listorder is not null
+      and      a.useyn = 'Y'
+      and      b.tableid = 'XM605'
+      and      b.lang = common.get_cookie('SYSLANG')
+      --and      'Y' = decode(nvl(p_team_type, '*'), '*', 'Y', 'A', decode(team_type, 'A', 'Y', 'N'), 'B', decode(team_type, 'B', 'Y', 'N'))
+      --and      a.team_type = 'A'
+      order by  a.listorder;
+    
+    type r01 is record (
+      listvalue c_0051.listvalue%type,
+      listdescr c_0051.listdescr%type,
+      selected c_0051.listdescr%type
+    );
+    type r02 is table of r01 index by pls_integer;
+    rec r02;
+    
+    v_attr varchar2(50) := null;
+      
+  begin
+  
+    /*
+    p_all_type
+    
+    'a'    전체
+    'a-'  전체+NVL처리값(@)
+    'b'    빈칸
+    'c'    선택하세요
+    'z'    빈칸없음
+    
+    p_attr
+    disabled  disabled="disabled"
+    readonly  readonly="readonly"
+    yes        name= 부분을 표시함 - submit할 때 포함함
+    no        name= 부분을 표시하지 않음 - submit할 때 포함하지 않음
+    */
+    open cur;
+    fetch cur bulk collect into rec;
+    close cur;
+    
+    if lower(p_attr) = 'disabled' then
+      v_attr := ' name="'||p_element_name||'" disabled="disabled"';
+    elsif lower(p_attr) = 'readonly' then
+      v_attr := ' name="'||p_element_name||'" readonly="readonly"';
+    elsif lower(p_attr) = 'yes' then
+      v_attr := ' name="'||p_element_name||'"';
+    elsif lower(p_attr) = 'no' then
+      v_attr := null;
+    end if;
+    
+    if lower(p_element_tag) = 'select' then 
+      htp.p('
+      <select id="'||p_element_name||'" '||v_attr||'>
+      ');
+      if lower(p_all_type) = 'a' then      --  전체
+        htp.p('<option value="">'||get_fn('전체')||'</option>');
       elsif substr(lower(p_all_type), 1, 1) = 'a' and length(lower(p_all_type)) > 1 then  --  value는 substr(lower(p_all_type), 2, length(p_all_type))
-        htp.p('          <option value="'||substr(lower(p_all_type), 2, length(p_all_type))||'">'||get_fn('전체')||'</option>');
+        htp.p('<option value="'||substr(lower(p_all_type), 2, length(p_all_type))||'">'||get_fn('전체')||'</option>');
       elsif lower(p_all_type) = 'b' then  --  빈칸
-        htp.p('          <option value=""></option>');
+        htp.p('<option value=""></option>');
       elsif lower(p_all_type) = 'c' then  --  선택하세요
-        htp.p('          <option value="">'||get_fn('선택하세요')||'</option>');
+        htp.p('<option value="">'||get_fn('선택하세요')||'</option>');
       elsif lower(p_all_type) = 'z' then  --  칸 없음
         null;
       end if;
-      
-        --htp.p('<option value="">'||get_fn('선택하세요')||'</option>');
-      for rec in cur_search loop   
-        if (P_SYSTEMCD = rec.systemcd) then v_selected := '" selected>'; else v_selected := '">'; end if;   
-        htp.p('<option value="'||rec.systemcd||v_selected||rec.systemnm||'</option>');   
-      end loop;
-    END;  
+    end if;
+    
+    for i in 1 .. rec.count loop
+      if lower(p_element_tag) = 'input' then 
+        htp.p('
+        <input type="'||p_element_type||'" id="'||p_element_name||'_'||i||'" '||v_attr||' value="" '||rec(i).selected||' /> <label for="">'||rec(i).listdescr||'</label>
+        ');
+      elsif lower(p_element_tag) = 'select' then 
+        htp.p('
+        <option value="'||rec(i).listvalue||'" '||rec(i).selected||'>'||rec(i).listdescr||'</option>
+        ');
+       end if;
+    end loop;
+    
+    if lower(p_element_tag) = 'select' then 
+      htp.p('
+      </select>
+      ');
+    end if;    
+        
+  exception
+    when others then
+      htp.p('
+      <span id="err" style="color: #ff0000;">'||sqlerrm||'</span>
+      ');
+  end list_dept;
     
   PROCEDURE imageView
   (
