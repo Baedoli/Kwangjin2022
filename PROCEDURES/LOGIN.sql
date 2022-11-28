@@ -6,7 +6,16 @@
 set define off;
 
   CREATE OR REPLACE EDITIONABLE PROCEDURE "PREMIER"."LOGIN" 
+
+--------------------------------------------------------
+-- DDL for Procedure LOGIN
+-- GitHub Test ..
+-- 배성호 2022.11.16
+--------------------------------------------------------
+
 AS
+
+
 
 BEGIN
 
